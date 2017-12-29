@@ -1,0 +1,49 @@
+# Start Docker containers with the following command:
+#    mvn && docker-compose down --rmi local && docker-compose build && docker-compose --verbose up
+version: '2.1'
+services:
+  db:
+    image: mysql:5.7.20
+    environment:
+      MYSQL_ROOT_PASSWORD: ${mysql_root_password}
+      MYSQL_DATABASE: ${mysql_database_name}
+      MYSQL_USER: ${mysql_database_user}
+      MYSQL_PASSWORD: ${mysql_database_password}
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: >
+        mysql \
+          --user='${mysql_database_user}' \
+          --password='${mysql_database_password}' \
+          --host='localhost' \
+          --execute='SELECT 1 FROM INFORMATION_SCHEMA.TABLES' \
+          ${mysql_database_name}
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - 3306
+    volumes:
+      - jdbc-with-docker-mysql-data:/var/lib/mysql
+  app:
+    image: jdbc-with-docker-console-runner
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        JAVA_DEBUG_PORT: ${java_debug_port}
+    environment:
+      JDBC_URL: jdbc:mysql://address=(protocol=tcp)(host=db)(port=3306)/${mysql_database_name}?useSSL=false
+      JDBC_USER: ${mysql_database_user}
+      JDBC_PASSWORD: ${mysql_database_password}
+      JAVA_OPTIONS: ${java_jvm_flags:-Xmx512m} ${java_debug_settings}
+    stdin_open: true
+    tty: true
+    ports:
+      - ${java_debug_port}
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  jdbc-with-docker-mysql-data:

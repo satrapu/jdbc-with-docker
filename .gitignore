@@ -1,0 +1,18 @@
+# IntelliJ IDEA
+.idea
+*.iml
+
+# NetBeans
+nb-configuration.xml
+
+# Eclipse
+.classpath
+.project
+.settings
+bin
+
+# docker-compose
+.env
+
+# Maven
+target
