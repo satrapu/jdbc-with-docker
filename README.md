@@ -27,7 +27,20 @@ __Version 3 no longer supports the condition form of depends_on.__
 ### Solution #2: TBD  
 
 ### Setup  
-* Clone this repo  
+* Clone this repo 
+* Inside the root folder of this repo, create an .env file with the following contents:
+```properties
+mysql_root_password=<PASSWORD_GOES_HERE>
+
+mysql_database_name=<NAME_GOES_HERE>
+mysql_database_user=<USERNAME_GOES_HERE>
+mysql_database_password=<PASSWORD_GOES_HERE>
+
+java_jvm_flags=-Xmx512m
+
+java_debug_port=9876
+java_debug_settings=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9876
+``` 
 * Open a terminal and run the following commands:  
 ```bash
 # Run the default Maven build commands
@@ -42,3 +55,18 @@ docker-compose build && \
 # Start the MySQL Docker container, wait for the database to be able to process incoming connections and onlu then start the Java Docker container
 docker-compose up
 ```  
+
+### Debug the console application
+* Ensure the **java_debug_settings** property found inside the .env file will halt the JVM until a debugger is attached via the "suspend=y" argument and will listen for a debugger on the port mentioned via "address=xxx" argument:
+```properties
+...
+java_debug_settings=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9876
+...
+```  
+* Find the host port mapped to the one exposed by the **app** service:  
+```bash
+docker-compose port --protocol=tcp app 9876
+```  
+* Configure your IDE to connect to a remote Java application using the Docker host port of the app service
+* Start compose
+* Step into the source code of the application running in a Docker container
