@@ -33,6 +33,10 @@ __Version 3 no longer supports the condition form of depends_on.__
 
 ### Setup  
 * Clone this repo 
+```bash
+$ git clone git@github.com:satrapu/jdbc-with-docker.git
+$ cd jdbc-with-docker
+```  
 * Inside the root folder of this repo, create an .env file with the following contents:
 ```properties
 mysql_root_password=<PASSWORD_GOES_HERE>
