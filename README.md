@@ -1,6 +1,11 @@
 # jdbc-with-docker  
 
 ## Description  
+This repo tackles the issue of controlling container startup order in Docker Compose.
+Additionally, the repo presents:
+- A way of bundling a Java console application along with its dependencies using Maven plugins
+- A way of getting a JDBC driver using Java SPI (https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
+
 This repo contains a docker-compose setup made out of 2 services: one database and one console application reading data from the former.  
 The main issue of this setup is to ensure that the application service will wait until the database service is ready to process any incoming connections.  
 
