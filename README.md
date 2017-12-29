@@ -72,6 +72,6 @@ java_debug_settings=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,add
 ```bash
 docker-compose port --protocol=tcp app 9876
 ```  
-* Configure your IDE to connect to a remote Java application using the Docker host port of the app service
+* Configure your IDE debugger to connect to a remote Java application using the Docker host port of the app service
 * Start compose
 * Step into the source code of the application running in a Docker container
