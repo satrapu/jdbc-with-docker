@@ -21,7 +21,7 @@ services:
 ...
 ```
 
-__This solution works only with Compose file versions 2.1, 2.2 and 2.3.__  
+__This solution works only with Compose file versions 2.1, 2.2 and 2.3!__  
 __Version 3 no longer supports the condition form of depends_on.__  
 
 ### Solution #2: TBD  
