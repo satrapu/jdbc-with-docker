@@ -28,8 +28,12 @@ services:
 
 __This solution works only with Compose file versions 2.1, 2.2 and 2.3!__  
 __Version 3 no longer supports the condition form of depends_on.__  
+See some reasoning for changing depends_on behaviour since v3 [here](https://github.com/docker/compose/issues/4305).
 
 ### Solution #2: TBD  
+
+### Other Solutions
+See [this page]( https://docs.docker.com/compose/startup-order) on Docker Compose documentation.
 
 ### Setup  
 * Clone this repo 
