@@ -39,15 +39,28 @@ $ cd jdbc-with-docker
 ```  
 * Inside the root folder of this repo, create an .env file with the following contents:
 ```properties
+# The password of the MySQL "root" user account 
 mysql_root_password=<PASSWORD_GOES_HERE>
 
+# The name of the MySQL database to be created when first running the "db" Compose service
 mysql_database_name=<NAME_GOES_HERE>
+
+# The name of the user account used for accessing the newly created MySQL database
 mysql_database_user=<USERNAME_GOES_HERE>
+
+# The password of the user account used for accessing the newly created MySQL database
 mysql_database_password=<PASSWORD_GOES_HERE>
 
+# The space separated list of JVM flags to be used when running the Java console application
+# inside the Docker container; see more here: https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html
 java_jvm_flags=-Xmx512m
 
+# The port used for debugging purposes
 java_debug_port=9876
+
+# The JVM flags used for enabling debugging.
+# Pay special attention to the "suspend" argument: if set to "y', the JVM process will halt until a debugger its attached; 
+# if set to "n", the debugger can be attached later, without initially halting the JVM process
 java_debug_settings=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9876
 ``` 
 * Open a terminal and run the following commands:  
@@ -61,7 +74,8 @@ docker-compose down --rmi local && \
 # Build Docker image containing the Java 8 console application
 docker-compose build && \
 
-# Start the MySQL Docker container, wait for the database to be able to process incoming connections and onlu then start the Java Docker container
+# Start the MySQL Docker container, wait for the database to be able to process incoming connections
+# and only then start the Java console application Docker container
 docker-compose up
 ```  
 
