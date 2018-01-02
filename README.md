@@ -99,7 +99,10 @@ services:
 ```
 
 This new service is based on a [MySQL client Docker image](https://hub.docker.com/r/activatedgeek/mysql-client/) which will execute a SQL command from time to time via a simple [shell script](https://github.com/satrapu/jdbc-with-docker/blob/dariusz-pasciak-wait-for-dependencies/docker-compose.yml#L20).    
-The __check_db_connectivity__ and __app__ services will be run using separate Docker Compose commands to ensure the latter will start only after the former has ended its database connectivity check.
+The __check_db_connectivity__ and __app__ services will be run using separate Docker Compose commands to ensure the latter will start only after the former has ended its database connectivity check.  
+ 
+ This solution was inspired by [this blog entry](https://8thlight.com/blog/dariusz-pasciak/2016/10/17/docker-compose-wait-for-dependencies.html) and it's available inside branch [dariusz-pasciak-wait-for-dependencies](https://github.com/satrapu/jdbc-with-docker/blob/dariusz-pasciak-wait-for-dependencies).  
+ :exclamation: This solution works with Compose file version 2 and up.  
 
 #### Setup
 * Clone this repo 
@@ -158,8 +161,6 @@ docker-compose up check_db_connectivity && \
 # Start the Java Docker container
 docker-compose up app
 ```  
-
-This solution was inspired by [this blog entry](https://8thlight.com/blog/dariusz-pasciak/2016/10/17/docker-compose-wait-for-dependencies.html) and it's available inside branch [dariusz-pasciak-wait-for-dependencies](https://github.com/satrapu/jdbc-with-docker/blob/dariusz-pasciak-wait-for-dependencies/docker-compose.yml#L18).  
 
 ### Other Solutions
 See [this page]( https://docs.docker.com/compose/startup-order) on Docker Compose documentation.
