@@ -99,7 +99,7 @@ services:
 ```
 
 This new service is based on a [MySQL client Docker image](https://hub.docker.com/r/activatedgeek/mysql-client/) which will execute a SQL command from time to time via a simple [shell script](https://github.com/satrapu/jdbc-with-docker/blob/dariusz-pasciak-wait-for-dependencies/docker-compose.yml#L20).    
-The __check_db_connectivity__ and __app__ services will be run using separate Docker Compose commands to ensure the former will start onlu after the latter has ended its database connectivity check.  
+The __check_db_connectivity__ and __app__ services will be run using separate Docker Compose commands to ensure the former will start only after the latter has ended its database connectivity check.  
 
 #### Setup
 * Clone this repo 
