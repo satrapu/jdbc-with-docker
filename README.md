@@ -81,7 +81,7 @@ docker-compose up
 
 ### Solution #2: Using a dependency checker service
 #### Description
-Another approach is to use a dependency checker service, __check_db_connectivity__, which will check whether the database is able to process incoming connections:
+Another approach is to use a dependency checker service, __check_db_connectivity__, which will check whether the database is able to process incoming connections before starting the application:
 ```yaml
 version: '2.1'
 services:
