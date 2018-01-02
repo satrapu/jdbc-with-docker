@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8-jre-alpine
 LABEL maintainer="Bogdan Marian <satrapu@users.noreply.github.com>"
 
 ARG JAVA_DEBUG_PORT
