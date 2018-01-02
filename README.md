@@ -81,8 +81,25 @@ docker-compose up
 
 ### Solution #2: Using a dependency checker service
 #### Description
-Another approach is to use a dependency checker service, __check_db_connectivity__, which will check whether the database is able to process incoming connections via a simple script.  
-The dependency checker and app services will be run using separate Docker Compose commands to ensure that when the app service will be run it will have a databsae to connect to.
+Another approach is to use a dependency checker service, __check_db_connectivity__, which will check whether the database is able to process incoming connections:
+```yaml
+version: '2.1'
+services:
+  db:
+    ...
+  check_db_connectivity:
+    image: activatedgeek/mysql-client:0.1
+    entrypoint: ...
+    depends_on:
+      - db
+  app:
+   ...
+   depends_on:
+     - db
+```
+
+This new service is based on a [MySQL client Docker image](https://hub.docker.com/r/activatedgeek/mysql-client/) which will execute a SQL command from time to time via a simple [shell script](https://github.com/satrapu/jdbc-with-docker/blob/dariusz-pasciak-wait-for-dependencies/docker-compose.yml#L20).    
+The __check_db_connectivity__ and __app__ services will be run using separate Docker Compose commands to ensure the former will start onlu after the latter has ended its database connectivity check.  
 
 #### Setup
 * Clone this repo 
@@ -125,20 +142,20 @@ java_debug_settings=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,add
 
 * Open a terminal and run the following commands:  
 ```bash
-# Run the default Maven build commands.
+# Run the default Maven build commands
 mvn && \
 
-# Stop the existing containers, if any, and remove any local content.
+# Stop the existing containers, if any, and remove any local content
 docker-compose down --rmi local && \
 
-# Build Docker image containing the Java 8 console application.
+# Build Docker image containing the Java 8 console application
 docker-compose build && \
 
 # Start the MySQL Docker container, then the dependency checker container and then run the script which will try to connect to the database
 # for a given amount of retries each several seconds.
 docker-compose up check_db_connectivity && \
 
-# Start the Java Docker container.
+# Start the Java Docker container
 docker-compose up app
 ```  
 
@@ -148,10 +165,10 @@ This solution was inspired by [this blog entry](https://8thlight.com/blog/darius
 See [this page]( https://docs.docker.com/compose/startup-order) on Docker Compose documentation.
 
 ### Bonus
-#### Load JDBC driver using Java SPI
+#### Create JAR using Maven Assembly plugin
 TBD
 
-#### Create JAR using Maven Assembly plugin
+#### Load JDBC driver using Java SPI
 TBD
 
 #### Debug the console application
