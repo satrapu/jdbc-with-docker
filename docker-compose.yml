@@ -17,11 +17,10 @@ services:
           --user='${mysql_database_user}' \
           --password='${mysql_database_password}' \
           --host='localhost' \
-          --execute='SELECT 1 FROM INFORMATION_SCHEMA.TABLES' \
-          ${mysql_database_name}
+          --execute='USE ${mysql_database_name}' \
       interval: 5s
-      timeout: 10s
-      retries: 10
+      timeout: 5s
+      retries: 15
     ports:
       - 3306
     volumes:
