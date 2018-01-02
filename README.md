@@ -1,17 +1,18 @@
 # jdbc-with-docker  
 
 ## Description  
-This repo tackles the issue of controlling container startup order in Docker Compose.
+This repo tackles the issue of controlling container startup order in Docker Compose.  
 Additionally, the repo presents:
 - A way of bundling a Java console application along with its dependencies using Maven [Assembly plugin](http://maven.apache.org/plugins/maven-assembly-plugin/index.html)
 - A way of getting a JDBC driver using [Java SPI](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
+- Debug a Java application running in a Docker container
 
-This repo contains a docker-compose setup made out of 2 services: one database and one console application reading data from the former.  
+This repo contains a docker-compose setup made out of 2 services: one database and one console application reading data from the former.   
 The main issue of this setup is to ensure that the application service will wait until the database service is ready to process any incoming connections.  
 
 ## Solutions  
-### Solution #1: Docker-Compose healthcheck and depends_on directives  
-One possible approach for tackling this problem is to make use of the [healthcheck](https://docs.docker.com/compose/compose-file/compose-file-v2/#healthcheck) and [depends_on](https://docs.docker.com/compose/compose-file/compose-file-v2/#depends_on) directives from docker-compose.yml file:
+### Solution #1: Using healthcheck and depends_on Docker Compose directives  
+One possible approach for tackling this problem is to make use of the [healthcheck](https://docs.docker.com/compose/compose-file/compose-file-v2/#healthcheck) and [depends_on](https://docs.docker.com/compose/compose-file/compose-file-v2/#depends_on) Docker Compose directives:  
 ```yaml
 version: '2.1'
 services:
@@ -26,9 +27,8 @@ services:
 ...
 ```
 
-__This solution works only with Compose file versions 2.1, 2.2 and 2.3!__  
-__Version 3 no longer supports the condition form of depends_on.__  
-See some reasoning for changing depends_on behaviour since v3 [here](https://github.com/docker/compose/issues/4305).
+ :exclamation: This solution works only with Compose file versions 2.1, 2.2 and 2.3, since version 3 no longer supports the condition form of depends_on.  
+See some reasoning for changing depends_on behaviour [here](https://github.com/docker/compose/issues/4305).
 
 ### Solution #2: TBD  
 
