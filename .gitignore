@@ -11,6 +11,9 @@ nb-configuration.xml
 .settings
 bin
 
+# Visual Studio Code
+.vscode
+
 # docker-compose
 .env
 
