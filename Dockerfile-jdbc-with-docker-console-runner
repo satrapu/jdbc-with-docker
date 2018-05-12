@@ -4,6 +4,10 @@ LABEL maintainer="Bogdan Marian <satrapu@users.noreply.github.com>"
 ARG JAVA_DEBUG_PORT
 ADD target/jdbc-with-docker-jar-with-dependencies.jar /opt/app/app.jar
 
+RUN apk add --no-cache \
+    curl=7.59.0-r0  \
+    jq=1.5-r5
+
 WORKDIR /opt/app
 
 # Debug port
