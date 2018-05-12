@@ -21,7 +21,7 @@
 # ;mvn `
 # ;docker-compose --file docker-compose-using-api.yml down --rmi local  `
 # ;docker-compose --file docker-compose-using-api.yml build `
-# ;docker-compose --file docker-compose-using-api.yml up app
+# ;docker-compose --file docker-compose-using-api.yml up
 
 version: '3.6'
 services:
@@ -76,11 +76,12 @@ services:
         while [ $$currentAttempt -le $$totalAttempts ]; do
           sleep $$sleepingTime
           
-          response=$$(curl --silent --unix-socket /var/run/docker.sock http:/v$${docker_api_version}/containers/json | \
+          response=$$(curl --silent --unix-socket /var/run/docker.sock http://v$${docker_api_version}/containers/json | \
             jq '.[] | select(.Names[] | contains(\"_db_\")) | select(.State == \"running\") | .Status | contains(\"healthy\")')
 
           if [ \"$$response\" = \"true\" ]; then
             echo \"OK: [$$currentAttempt/$$totalAttempts] MySQL database \"${mysql_database_name}\" is up & running.\"
+            java $JAVA_OPTIONS -jar app.jar
             return 0
           else
             echo \"WARN: [$$currentAttempt/$$totalAttempts] MySQL database \"${mysql_database_name}\" is still NOT up & running ...\"
@@ -89,8 +90,7 @@ services:
         done;
 
         echo 'ERROR: Could not connect to MySQL database \"${mysql_database_name}\" in due time.'
-        return 1
-      "
+        return 1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
