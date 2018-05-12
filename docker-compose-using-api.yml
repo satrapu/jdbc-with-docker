@@ -81,7 +81,7 @@ services:
 
           if [ \"$$response\" = \"true\" ]; then
             echo \"OK: [$$currentAttempt/$$totalAttempts] MySQL database \"${mysql_database_name}\" is up & running.\"
-            java $JAVA_OPTIONS -jar app.jar
+            java $$JAVA_OPTIONS -jar app.jar
             return 0
           else
             echo \"WARN: [$$currentAttempt/$$totalAttempts] MySQL database \"${mysql_database_name}\" is still NOT up & running ...\"
