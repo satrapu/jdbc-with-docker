@@ -1,0 +1,99 @@
+### Before running any Compose services, make sure you have an .env file 
+# inside your current folder and that it has been populated with the following content:
+#   mysql_root_password=<MYSQL_ROOT_PASSWORD>
+# 
+#   mysql_database_name=jdbcwithdocker
+#   mysql_database_user=<DB_USER_NAME>
+#   mysql_database_password=<DB_PASSWORD>
+# 
+#   check_db_connectivity_interval=2
+#   check_db_connectivity_retries=20
+# 
+#   java_jvm_flags=-Xmx512m
+# 
+#   java_debug_port=9876
+#   java_debug_settings=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9876
+
+### Start Docker containers with the following command executed inside a Powershell run as admin:
+# https://github.com/docker/for-win/issues/1829#issuecomment-376873875
+# Docker Engine API: //https://docs.docker.com/engine/api/v1.24/
+# $Env:COMPOSE_CONVERT_WINDOWS_PATHS=1 `
+# ;mvn `
+# ;docker-compose --file docker-compose-using-api.yml down --rmi local  `
+# ;docker-compose --file docker-compose-using-api.yml build `
+# ;docker-compose --file docker-compose-using-api.yml up app
+
+version: '3.6'
+services:
+  db:
+    image: mysql:5.7.20
+    environment:
+      MYSQL_ROOT_PASSWORD: ${mysql_root_password}
+      MYSQL_DATABASE: ${mysql_database_name}
+      MYSQL_USER: ${mysql_database_user}
+      MYSQL_PASSWORD: ${mysql_database_password}
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: >
+        mysql \
+          --host='localhost' \
+          --user='${mysql_database_user}' \
+          --password='${mysql_database_password}' \
+          --execute='USE ${mysql_database_name}' \
+      interval: ${healthcheck_interval}
+      timeout: ${healthcheck_timeout}
+      retries: ${healthcheck_retries}
+    ports:
+      - 3306
+    volumes:
+      - jdbc-with-docker-mysql-data:/var/lib/mysql
+  app:
+    image: satrapu/jdbc-with-docker-console-runner
+    build:
+      context: .
+      dockerfile: ./Dockerfile-jdbc-with-docker-console-runner
+      args:
+        JAVA_DEBUG_PORT: ${java_debug_port}
+    environment:
+      JDBC_URL: jdbc:mysql://address=(protocol=tcp)(host=db)(port=3306)/${mysql_database_name}?useSSL=false
+      JDBC_USER: ${mysql_database_user}
+      JDBC_PASSWORD: ${mysql_database_password}
+      JAVA_OPTIONS: ${java_jvm_flags} ${java_debug_settings}
+    stdin_open: true
+    tty: true
+    ports:
+      - ${java_debug_port}
+    entrypoint: >
+      /bin/sh -c "
+        sleepingTime='${check_db_connectivity_interval}'
+        totalAttempts=${check_db_connectivity_retries}
+        currentAttempt=1
+
+        echo \"Start checking whether MySQL database \"${mysql_database_name}\" is up & running\" \
+              \"(able to process incoming connections) each $$sleepingTime for a total amount of $$totalAttempts times\"
+
+        while [ $$currentAttempt -le $$totalAttempts ]; do
+          sleep $$sleepingTime
+          
+          response=$$(curl --silent --unix-socket /var/run/docker.sock http:/v$${docker_api_version}/containers/json | \
+            jq '.[] | select(.Names[] | contains(\"_db_\")) | select(.State == \"running\") | .Status | contains(\"healthy\")')
+
+          if [ \"$$response\" = \"true\" ]; then
+            echo \"OK: [$$currentAttempt/$$totalAttempts] MySQL database \"${mysql_database_name}\" is up & running.\"
+            return 0
+          else
+            echo \"WARN: [$$currentAttempt/$$totalAttempts] MySQL database \"${mysql_database_name}\" is still NOT up & running ...\"
+            currentAttempt=`expr $$currentAttempt + 1`
+          fi
+        done;
+
+        echo 'ERROR: Could not connect to MySQL database \"${mysql_database_name}\" in due time.'
+        return 1
+      "
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - db
+volumes:
+  jdbc-with-docker-mysql-data:

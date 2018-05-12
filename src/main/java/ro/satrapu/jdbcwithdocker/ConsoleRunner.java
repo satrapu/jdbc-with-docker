@@ -69,6 +69,7 @@ public class ConsoleRunner {
 					}
 
 					System.out.println(TABLE_SEPARATOR);
+					System.out.println("Application was successfully able to fetch data out of the underlying database!");
 				} catch (SQLException e) {
 					throw new RuntimeException(String.format("Failed to execute query: \"%s\".", SELECT_TABLE_INFO), e);
 				}
