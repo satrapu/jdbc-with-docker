@@ -18,8 +18,9 @@
   #  mvn `
   #  ;docker-compose --file docker-compose-using-port-checking.yml down --rmi local  `
   #  ;docker-compose --file docker-compose-using-port-checking.yml build `
-  #  ;docker-compose --file docker-compose-using-port-checking.yml up check_db_connectivity `
-  #  ;docker-compose --file docker-compose-using-port-checking.yml up app
+  #  ;docker-compose --file docker-compose-using-port-checking.yml up --exit-code-from check_db_connectivity check_db_connectivity `
+  # ;if ($LASTEXITCODE -eq 0) { docker-compose --file docker-compose-using-port-checking.yml up app } `
+  # else { echo "ERROR: Failed to start service due to one of its dependencies!" }
 
 version: '3.6'
 services:
